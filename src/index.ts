@@ -435,7 +435,10 @@ export function parseSetCookie(str: string, options?: ParseOptions): SetCookie {
         setCookie.path = val;
         break;
       case "max-age":
-        if (val && maxAgeRegExp.test(val)) setCookie.maxAge = Number(val);
+        if (val && maxAgeRegExp.test(val)) {
+          const maxAge = Number(val);
+          if (Number.isFinite(maxAge)) setCookie.maxAge = maxAge;
+        }
         break;
       case "expires":
         if (!val) break;

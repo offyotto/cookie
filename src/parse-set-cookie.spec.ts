@@ -164,6 +164,22 @@ describe("cookie.parseSetCookie", () => {
       });
     });
 
+    it.each(["9".repeat(310), "-" + "9".repeat(310)])(
+      "should ignore overflowing max-age %s",
+      (value) => {
+        expect(parseSetCookie(`key=value; Max-Age=${value}`)).toEqual({
+          name: "key",
+          value: "value",
+        });
+      },
+    );
+
+    it("should retain the previous max-age when a duplicate overflows", () => {
+      expect(
+        parseSetCookie(`key=value; Max-Age=60; Max-Age=${"9".repeat(310)}`),
+      ).toEqual({ name: "key", value: "value", maxAge: 60 });
+    });
+
     it("should parse negative max-age", () => {
       expect(parseSetCookie("key=value; Max-Age=-1")).toEqual({
         name: "key",
